@@ -90,3 +90,4 @@ ENV/
 
 tests/*.txt
 tests/*.json
+tests/msgdata
