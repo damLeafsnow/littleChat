@@ -30,7 +30,14 @@ class MsgUnit(object):
         self.msgType = msgType
         self.msgContent = msgContent
         
+def json2MsgUnit(d):
+        return MsgUnit(d['time'], d['userID'], d['msgType'], d['msgContent'])
 
 testMsg = MsgUnit('<2017.04.05 00:18:50>', 'asuna', 'public', 'hello,everyone')
-with open(''.join(localFile) + '\\classSave.txt', 'wb') as f3:
-        json.dump(testMsg, default = lambda obj: obj.__dict__, f3)
+with open(''.join(localFile) + '\\classSave.json', 'wb') as f3:
+        json.dump(testMsg, f3, default = lambda obj: obj.__dict__)
+        
+with open(''.join(localFile) + '\\classSave.json', 'rb') as f4:
+        str = f4.readline()
+testMsg = json.loads(str, object_hook = json2MsgUnit)
+print testMsg.time + testMsg.userID + ':' + testMsg.msgContent
