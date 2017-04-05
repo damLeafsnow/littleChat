@@ -38,12 +38,8 @@ def listeningMsg(s):
 
 
 if __name__ == "__main__":
-    #if(len(sys.argv) < 3):
-    #    print 'Usage : python chatClient.py hostname port'
-    #    sys.exit()
-        
-    host = "127.0.0.1"#sys.argv[1]
-    port = 8848#int(sys.argv[2])
+    host = "127.0.0.1"
+    port = 8848
     
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     #s.settimeout(2)#阻塞超时时间
