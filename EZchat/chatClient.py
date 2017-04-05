@@ -2,11 +2,28 @@
 import threading
 import string
 import sys
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+import os
+import time
+localPath = os.path.split(os.path.realpath(__file__))[0]
 
+#输入处理,<yooo>怎么去掉、、
 def prompt():
     sys.stdout.write('<you>')
     sys.stdout.flush()
-    
+
+#处理信息并输出
+def printMsg(message):
+    sys.stdout.flush()
+    if message['msgType'] == 'public':
+        print '<' + message['time'] + '>' + message['username'] + ':' + message['msgContent']
+    elif message['msgType'] == 'private':
+        print '[Pvt]' + '<' + message['time'] + '>' + message['username'] + ':' + message['msgContent']
+
+#监听数据
 def listeningMsg(s):
     while True:
     #incoming messages
@@ -15,7 +32,8 @@ def listeningMsg(s):
             print '\nDisconnected from chat server'
             exit()
         else:
-            print data
+            msg = pickle.loads(data)
+            printMsg(msg)
             prompt()
 
 
@@ -45,8 +63,8 @@ if __name__ == "__main__":
     
     while True:
         #user input
-        msg = raw_input()
-        s.send(msg)
+        str = raw_input()
+        s.send(str)
         prompt()
     s.close()
 

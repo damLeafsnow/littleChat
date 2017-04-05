@@ -1,5 +1,12 @@
 ﻿import threading
 import socket
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+import os
+import time
+localPath = os.path.split(os.path.realpath(__file__))[0]
 
 #广播接受到的客户端信息
 def broadcast_data(sock, message):
@@ -25,16 +32,34 @@ def startListening():
         t.start()
         
         print "Client (%s, %s) connected" % addr
-        broadcast_data(sock, "[%s:%s] entered room\n" % addr)
+        msg = {
+            'time' : time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+            'username' : 'system',
+            'msgType' : 'public',
+            'msgContent' : "[%s:%s] entered room\n" % addr
+            }
+        broadcast_data(sock, pickle.dumps(msg))
 
 def msgIncoming(sock, addr):
     while True:
         try:
             data = sock.recv(RECV_BUFFER)
             if data:
-                broadcast_data(sock, "\r" + '<' + str(sock.getpeername()) + '>' + data)
+                msg = {
+                    'time' : time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                    'username' : str(sock.getpeername()),
+                    'msgType' : 'public',
+                    'msgContent' : data
+                    }
+                broadcast_data(sock, pickle.dumps(msg))
         except:
-            broadcast_data(sock, "Client (%s, %s) is offline" % addr)
+            msg = {
+                'time' : time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
+                'username' : 'system',
+                'msgType' : 'public',
+                'msgContent' : "Client (%s, %s) is offline" % addr
+                }
+            broadcast_data(sock, pickle.dumps(msg))
             print "Client (%s, %s) is offline" % addr
             sock.close()
             CONNECTION_LIST.remove(sock)
